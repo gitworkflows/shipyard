@@ -1,0 +1,251 @@
+######################
+###  CODE OWNERS   ###
+######################
+
+# CODEOWNERS
+/CODEOWNERS @thrau @dominikschubert @alexrashed
+
+# README / Docs
+/doc/ @HarshCasper
+/README.md @HarshCasper
+/CODE_OF_CONDUCT.md @HarshCasper
+/CONTRIBUTING.md @HarshCasper
+/LICENSE.txt @HarshCasper @alexrashed
+
+# Docker
+/bin/docker-entrypoint.sh @thrau @alexrashed
+/.dockerignore @alexrashed
+/Dockerfile @alexrashed
+
+# Git, Pipelines, GitHub config
+/.circleci @alexrashed @dfangl @dominikschubert
+/.github @alexrashed @dfangl @dominikschubert
+/.test_durations @alexrashed
+/.git-blame-ignore-revs @alexrashed @thrau
+/bin/release-dev.sh @thrau @alexrashed
+/bin/release-helper.sh @thrau @alexrashed
+
+# ASF
+/shipyard/aws/ @thrau
+/tests/unit/aws/ @thrau
+# ASF parsers and serializers
+/shipyard/aws/protocol @alexrashed
+# left empty (without owner) because the generated APIs belong to the specific service owners
+# you can overwrite this for single services afterwards
+/shipyard/aws/api/
+
+# CLI
+/shipyard/cli/ @thrau @alexrashed
+/tests/unit/cli/ @thrau @alexrashed
+/tests/cli/ @thrau @alexrashed
+
+# Plugins
+/shipyard/plugins.py @thrau
+/shipyard/config.py @thrau
+/tests/unit/services/test_internal.py @thrau
+
+# Extensions
+/shipyard/extensions/ @thrau
+
+# Container utils
+/shipyard/utils/container_utils/ @dfangl @dominikschubert
+/shipyard/utils/docker_utils.py @dfangl @dominikschubert
+/tests/unit/test_docker_utils.py @dfangl @dominikschubert
+/tests/unit/test_dockerclient.py @dfangl @dominikschubert
+
+# Package Installers
+/shipyard/packages/ @alexrashed
+/shipyard/services/kinesis/packages.py @alexrashed
+
+# DNS server
+/shipyard/dns @simonrw @dfangl
+
+# HTTP framework
+/shipyard/http/ @thrau
+/tests/unit/http_/ @thrau
+
+# Runtime
+/shipyard/runtime/ @thrau
+
+# Logging
+/shipyard/logging/ @dfangl @alexrashed @dominikschubert
+
+# Stores
+/shipyard/services/stores.py @viren-nadkarni
+/tests/unit/test_stores.py @viren-nadkarni
+
+# Analytics client
+/shipyard/utils/analytics/ @thrau
+/tests/unit/utils/analytics/ @thrau
+
+# Snapshot testing
+/shipyard/testing/snapshots/ @dominikschubert @steffyP
+/shipyard/testing/pytest/ @dominikschubert
+/shipyard/testing/pytest/snapshot.py @dominikschubert @steffyP
+/tests/unit/utils/testing/ @dominikschubert @steffyP
+
+# Scenario testing
+/shipyard/testing/scenario/ @dominikschubert @steffyP
+
+# Bootstrap tests
+/tests/bootstrap @simonrw
+/shipyard/testing/pytest/container.py @dominikschubert @simonrw
+
+######################
+### SERVICE OWNERS ###
+######################
+
+
+# acm
+/shipyard/aws/api/acm/ @alexrashed
+/shipyard/services/acm/ @alexrashed
+/tests/aws/services/acm/ @alexrashed
+
+# apigateway
+/shipyard/aws/api/apigateway/ @calvernaz @bentsku
+/shipyard/services/apigateway/ @calvernaz @bentsku
+/shipyard/services/cloudformation/models/apigateway.py @calvernaz @bentsku
+/tests/aws/services/apigateway/ @calvernaz @bentsku
+/tests/unit/test_apigateway.py @calvernaz @bentsku
+
+# cloudformation
+/shipyard/aws/api/cloudformation/ @dominikschubert @pinzon @simonrw
+/shipyard/services/cloudformation/ @dominikschubert @pinzon @simonrw
+# left empty (without owner) because the models belong to the specific service owners
+# you can overwrite this for single services afterwards
+/shipyard/services/cloudformation/models/
+/shipyard/services/cloudformation/models/cloudformation.py @dominikschubert @pinzon @simonrw
+/tests/aws/services/cloudformation/ @dominikschubert @pinzon @simonrw
+/tests/unit/test_cloudformation.py @dominikschubert @pinzon @simonrw
+/tests/unit/services/cloudformation/ @dominikschubert @pinzon @simonrw
+
+# cloudwatch
+/shipyard/aws/api/cloudwatch/ @steffyP @silv-io
+/shipyard/services/cloudwatch/ @steffyP @silv-io
+/shipyard/services/cloudformation/models/cloudwatch.py @steffyP @silv-io
+/tests/aws/services/cloudwatch/ @steffyP @silv-io
+/tests/unit/test_cloudwatch.py @steffyP @silv-io
+
+# dynamodb
+/shipyard/aws/api/dynamodb/ @viren-nadkarni @giograno
+/shipyard/services/dynamodb/ @viren-nadkarni @giograno
+/shipyard/services/cloudformation/models/dynamodb.py @viren-nadkarni @giograno
+/tests/aws/services/dynamodb/ @viren-nadkarni @giograno
+/tests/unit/test_dynamodb.py @viren-nadkarni @giograno
+
+# ec2
+/shipyard/aws/api/ec2/ @viren-nadkarni
+/shipyard/services/ec2/ @viren-nadkarni
+/shipyard/services/cloudformation/models/ec2.py @viren-nadkarni
+/tests/aws/services/ec2/ @viren-nadkarni
+
+# ecr
+/shipyard/services/ecr/ @dfangl
+/shipyard/services/cloudformation/models/ecr.py @dfangl
+
+# es
+/shipyard/aws/api/es/ @alexrashed @silv-io
+/shipyard/services/es/ @alexrashed @silv-io
+/shipyard/services/cloudformation/models/es.py @alexrashed @silv-io
+/tests/aws/services/es/ @alexrashed @silv-io
+
+# events
+/shipyard/aws/api/events/ @dominikschubert @dfangl
+/shipyard/services/events/ @dominikschubert @dfangl
+/shipyard/services/cloudformation/models/events.py @dominikschubert @dfangl
+/tests/aws/services/events/ @dominikschubert @dfangl
+
+# iam
+/shipyard/aws/api/iam/ @dfangl
+/shipyard/services/iam/ @dfangl
+/shipyard/services/cloudformation/models/iam.py @dfangl
+/tests/aws/services/iam/ @dfangl
+
+# kms
+/shipyard/aws/api/kms/ @sannya-singal @silv-io
+/shipyard/services/kms/ @sannya-singal @silv-io
+/shipyard/services/cloudformation/models/kms.py @sannya-singal @silv-io
+/tests/aws/services/kms/ @sannya-singal @silv-io
+/tests/unit/test_kms.py @sannya-singal @silv-io
+
+# lambda
+/shipyard/aws/api/lambda_/ @joe4dev @dominikschubert @dfangl
+/shipyard/services/lambda_/ @joe4dev @dominikschubert @dfangl
+/shipyard/services/cloudformation/models/lambda_.py @joe4dev @dominikschubert @dfangl
+/tests/aws/services/lambda_/ @joe4dev @dominikschubert @dfangl
+/tests/unit/services/lambda_/ @joe4dev @dominikschubert @dfangl
+
+# logs
+/shipyard/aws/api/logs/ @steffyP @silv-io
+/shipyard/services/logs/ @steffyP @silv-io
+/shipyard/services/cloudformation/models/logs.py @steffyP @silv-io
+/tests/aws/services/logs/ @steffyP @silv-io
+/tests/unit/test_logs.py @steffyP @silv-io
+
+# opensearch
+/shipyard/aws/api/opensearch/ @alexrashed @silv-io
+/shipyard/services/opensearch/ @alexrashed @silv-io
+/shipyard/services/cloudformation/models/opensearch.py @alexrashed @silv-io
+/tests/aws/services/opensearch/ @alexrashed @silv-io
+/tests/unit/services/opensearch/ @alexrashed @silv-io
+
+# route53
+/shipyard/aws/api/route53/ @giograno
+/shipyard/services/route53/ @giograno
+/shipyard/services/cloudformation/models/route53.py @giograno
+/tests/aws/services/route53/ @giograno
+
+# route53resolver
+/shipyard/aws/api/route53resolver/ @macnev2013 @sannya-singal
+/shipyard/services/route53resolver/ @macnev2013 @sannya-singal
+/tests/aws/services/route53resolver/ @macnev2013 @sannya-singal
+
+# s3
+/shipyard/aws/api/s3/ @bentsku @macnev2013
+/shipyard/services/s3/ @bentsku @macnev2013
+/shipyard/services/cloudformation/models/s3.py @bentsku @macnev2013
+/tests/aws/services/s3/ @bentsku @macnev2013
+/tests/unit/test_s3.py @bentsku @macnev2013
+/tests/unit/services/s3/ @bentsku @macnev2013
+
+# secretsmanager
+/shipyard/aws/api/secretsmanager/ @dominikschubert @MEPalma
+/shipyard/services/secretsmanager/ @dominikschubert @MEPalma
+/shipyard/services/cloudformation/models/secretsmanager.py @dominikschubert @MEPalma
+/tests/aws/services/secretsmanager/ @dominikschubert @MEPalma
+
+# ses
+/shipyard/aws/api/ses/ @viren-nadkarni
+/shipyard/services/ses/ @viren-nadkarni
+/tests/aws/services/ses/ @viren-nadkarni
+
+# sns
+/shipyard/aws/api/sns/ @bentsku @thrau
+/shipyard/services/sns/ @bentsku @thrau
+/shipyard/services/cloudformation/models/sns.py @bentsku @thrau
+/tests/aws/services/sns/ @bentsku @thrau
+/tests/unit/test_sns.py @bentsku @thrau
+
+# sqs
+/shipyard/aws/api/sqs/ @thrau @baermat
+/shipyard/services/sqs/ @thrau @baermat
+/shipyard/services/cloudformation/models/sqs.py @thrau @baermat
+/tests/aws/services/sqs/ @thrau @baermat
+/tests/unit/test_sqs.py @thrau @baermat
+
+# ssm
+/shipyard/aws/api/ssm/ @dominikschubert
+/shipyard/services/ssm/ @dominikschubert
+/shipyard/services/cloudformation/models/ssm.py @dominikschubert
+/tests/aws/services/ssm/ @dominikschubert
+
+# stepfunctions
+/shipyard/aws/api/stepfunctions/ @dominikschubert @MEPalma
+/shipyard/services/stepfunctions/ @dominikschubert @MEPalma
+/shipyard/services/cloudformation/models/stepfunctions.py @dominikschubert @MEPalma
+/tests/aws/services/stepfunctions/ @dominikschubert @MEPalma
+
+# transcribe
+/shipyard/aws/api/transcribe/ @sannya-singal @ackdav
+/shipyard/services/transcribe/ @sannya-singal @ackdav
+/tests/aws/services/transcribe/ @sannya-singal @ackdav

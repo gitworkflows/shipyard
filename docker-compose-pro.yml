@@ -1,0 +1,19 @@
+version: "3.8"
+
+services:
+  shipyard:
+    container_name: "${SHIPYARD_DOCKER_NAME:-shipyard-main}"
+    image: khulnasoft/shipyard-pro  # required for Pro
+    ports:
+      - "127.0.0.1:4566:4566"            # Shipyard Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+      - "127.0.0.1:443:443"              # Shipyard HTTPS Gateway (Pro)
+    environment:
+      # Activate Shipyard Pro: https://docs.shipyard.khulnasoft.com/getting-started/auth-token/
+      - SHIPYARD_AUTH_TOKEN=${SHIPYARD_AUTH_TOKEN:?}  # required for Pro
+      # Shipyard configuration: https://docs.shipyard.khulnasoft.com/references/configuration/
+      - DEBUG=${DEBUG:-0}
+      - PERSISTENCE=${PERSISTENCE:-0}
+    volumes:
+      - "${SHIPYARD_VOLUME_DIR:-./volume}:/var/lib/shipyard"
+      - "/var/run/docker.sock:/var/run/docker.sock"

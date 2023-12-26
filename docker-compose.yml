@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  shipyard:
+    container_name: "${SHIPYARD_DOCKER_NAME:-shipyard-main}"
+    image: khulnasoft/shipyard
+    ports:
+      - "127.0.0.1:4566:4566"            # Shipyard Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range
+    environment:
+      # Shipyard configuration: https://docs.shipyard.khulnasoft.com/references/configuration/
+      - DEBUG=${DEBUG:-0}
+    volumes:
+      - "${SHIPYARD_VOLUME_DIR:-./volume}:/var/lib/shipyard"
+      - "/var/run/docker.sock:/var/run/docker.sock"

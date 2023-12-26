@@ -1,0 +1,6 @@
+include Makefile
+include LICENSE.txt
+recursive-include shipyard/ext *.java
+recursive-include shipyard/ext pom.xml
+recursive-include shipyard/utils/kinesis *.java
+recursive-include shipyard/utils/kinesis *.py

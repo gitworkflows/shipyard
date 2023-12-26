@@ -1,0 +1,124 @@
+# base: Stage which installs necessary runtime dependencies (OS packages, filesystem...)
+FROM python:3.11.7-slim-bookworm@sha256:8f64a67710f3d981cf3008d6f9f1dbe61accd7927f165f4e37ea3f8b883ccc3f as base
+ARG TARGETARCH
+
+# set workdir
+RUN mkdir -p /opt/code/shipyard
+WORKDIR /opt/code/shipyard/
+
+# Install runtime OS package dependencies
+RUN --mount=type=cache,target=/var/cache/apt \
+    apt-get update && \
+        # Install dependencies to add additional repos
+        apt-get install -y --no-install-recommends \
+            # Runtime packages (groff-base is necessary for AWS CLI help)
+             ca-certificates curl make openssl
+# TODO: add this if we need the DNS server: iputils-ping iproute2
+
+SHELL [ "/bin/bash", "-c" ]
+
+# create shipyard user and filesystem hierarchy, perform some permission fixes
+RUN chmod 777 . && \
+    useradd -ms /bin/bash shipyard && \
+    mkdir -p /var/lib/shipyard && \
+    chmod -R 777 /var/lib/shipyard && \
+    mkdir -p /usr/lib/shipyard && \
+    mkdir /tmp/shipyard && \
+    chmod -R 777 /tmp/shipyard && \
+    touch /tmp/shipyard/.marker
+
+# install the entrypoint script
+ADD bin/docker-entrypoint.sh /usr/local/bin/
+# add the shipped hosts file to prevent performance degredation in windows container mode on windows
+# (where hosts file is not mounted) See https://github.com/khulnasoft/shipyard/issues/5178
+ADD bin/hosts /etc/hosts
+
+# expose default environment
+# Set edge bind host so shipyard can be reached by other containers
+# set library path and default Shipyard hostname
+ENV USER=shipyard
+ENV PYTHONUNBUFFERED=1
+
+
+# builder: Stage which installs the dependencies of Shipyard Community
+FROM base as builder
+ARG TARGETARCH
+
+# Install build dependencies to base
+RUN --mount=type=cache,target=/var/cache/apt \
+    apt-get update && \
+        # Install dependencies to add additional repos
+        apt-get install -y gcc
+
+# upgrade python build tools
+RUN --mount=type=cache,target=/root/.cache \
+    (python3 -m venv .venv && . .venv/bin/activate && pip3 install --upgrade pip wheel setuptools)
+
+# add files necessary to install all dependencies
+ADD Makefile setup.py setup.cfg pyproject.toml ./
+# add the root package init to invalidate docker layers with version bumps
+ADD shipyard/__init__.py shipyard/
+# add the shipyard start scripts (necessary for the installation of the runtime dependencies, i.e. `pip install -e .`)
+ADD bin/shipyard bin/shipyard.bat bin/shipyard-supervisor bin/
+
+# install dependencies to run the Shipyard Pro runtime and save which ones were installed
+RUN --mount=type=cache,target=/root/.cache \
+    make install-s3
+RUN . .venv/bin/activate && pip3 freeze -l > requirements-runtime.txt
+
+# delete the botocore specs for other services (>80mb)
+# TODO: well now it's compressed and it's much lighter: 20mb maybe not worth it
+RUN find .venv/lib/python3.11/site-packages/botocore/data/ -mindepth 1 -maxdepth 1 -type d -not -name s3 -exec rm -rf '{}' \;
+
+
+# final stage: Builds upon base stage and copies resources from builder stages
+FROM base
+COPY --from=builder /opt/code/shipyard/.venv /opt/code/shipyard/.venv
+
+# add project files necessary to install all dependencies
+ADD Makefile setup.py setup.cfg pyproject.toml ./
+# add the shipyard start scripts (necessary for the installation of the runtime dependencies, i.e. `pip install -e .`)
+ADD bin/shipyard bin/shipyard.bat bin/shipyard-supervisor bin/
+
+# add the code as late as possible
+ADD shipyard/ shipyard/
+
+# Generate the plugin entrypoints
+RUN make entrypoints
+
+
+# link the python package installer virtual environments into the shipyard venv
+RUN echo /var/lib/shipyard/lib/python-packages/lib/python3.11/site-packages > shipyard-var-python-packages-venv.pth && \
+    mv shipyard-var-python-packages-venv.pth .venv/lib/python*/site-packages/
+RUN echo /usr/lib/shipyard/python-packages/lib/python3.11/site-packages > shipyard-static-python-packages-venv.pth && \
+    mv shipyard-static-python-packages-venv.pth .venv/lib/python*/site-packages/
+
+# expose edge service, external service ports, and debugpy
+EXPOSE 4566 5678
+
+HEALTHCHECK --interval=10s --start-period=15s --retries=5 --timeout=5s CMD ./bin/shipyard status services --format=json
+
+# default volume directory
+VOLUME /var/lib/shipyard
+
+# mark the image version
+RUN touch /usr/lib/shipyard/.s3-version
+
+LABEL authors="KhulnaSoft Contributors"
+LABEL maintainer="Shipyard Team (info@khulnasoft.com)"
+LABEL description="Shipyard S3 Docker image"
+
+# Add the build date and git hash at last (changes everytime)
+ARG SHIPYARD_BUILD_DATE
+ARG SHIPYARD_BUILD_GIT_HASH
+ARG SHIPYARD_BUILD_VERSION
+ENV SHIPYARD_BUILD_DATE=${SHIPYARD_BUILD_DATE}
+ENV SHIPYARD_BUILD_GIT_HASH=${SHIPYARD_BUILD_GIT_HASH}
+ENV SHIPYARD_BUILD_VERSION=${SHIPYARD_BUILD_VERSION}
+ENV EAGER_SERVICE_LOADING=1
+ENV SERVICES=s3
+# TODO: do we need DNS for the S3 image?
+ENV DNS_ADDRESS=false
+
+# define command at startup
+ENTRYPOINT ["docker-entrypoint.sh"]

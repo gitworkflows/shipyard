@@ -1,0 +1,14 @@
+name: Sync Project Cards
+
+on:
+  issues:
+    types:
+    - labeled
+    - unlabeled
+    - opened
+
+jobs:
+  sync-with-project:
+    uses: shipyard/meta/.github/workflows/sync-project.yml@main
+    secrets:
+      github-token: ${{ secrets.PRO_ACCESS_TOKEN }}

@@ -1,0 +1,10 @@
+Parameters:
+  BucketName:
+    Type: String
+
+Resources:
+  BucketModule:
+    Type: Shipyard::Testing::TestModule::MODULE
+    Properties:
+      BucketName:
+        Ref: BucketName
